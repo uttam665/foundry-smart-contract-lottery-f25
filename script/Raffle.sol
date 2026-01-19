@@ -3,14 +3,14 @@
 // imports
 // errors
 // interfaces, libraries, contract
-​
+
 // Inside Contract:
 // Type declarations
 // State variables
 // Events
 // Modifiers
 // Functions
-​
+
 // Layout of Functions:
 // constructor
 // receive function (if exists)
@@ -40,16 +40,29 @@ contract Raffle {
     /**Error */
     error Raffle_SendMoreToEnterRaffle();
 
-uint256 private immutable i_entranceFee;
+    uint256 private immutable i_entranceFee;
+// dev The duration of the lottery in seconds
+uint256 private immutable i_interval;
+address payable[] private s_players;
+uint256 private s_lastTimeStamp;
 
-constructor (uint256 entranceFee) {
+
+
+event RaffleEntered(address indexed player);
+
+}
+
+
+constructor (uint256 entranceFee, uint256 interval) {
     i_entranceFee = entranceFee;
+    i_interval = interval;
+    s_lastTimeStamp = block.timestamp;
 }
 
 
 
 
-    function enterRaffle() public payable {
+    function enterRaffle() external payable {
         // require(msg.value >= i_entranceFee, "Send more to enter raffle");
         // require(msg.value >= i_entranceFee, SendMoreToEnterRaffle());
 
@@ -57,11 +70,23 @@ constructor (uint256 entranceFee) {
             revert Raffle_SendMoreToEnterRaffle();
         }
 
+        s_players.push(payable(msg.sender));
+
+        emit RaffleEntered(msg.sender);
+
 
 
     }
 
-    function pickWinner() public {}
+    function pickWinner() external {
+        // check to see if enough time has passed
+
+        // 1000 - 2000 = 1000
+       if((block.timestamp - s_lastTimeStamp) > i_interval) {
+        revert();
+        }
+    }
+        // Get our
 
     /**
      * Getter Functions
@@ -70,4 +95,4 @@ constructor (uint256 entranceFee) {
         return i_entranceFee;
     }
 
-|}
+|
