@@ -100,6 +100,13 @@ contract Raffle is VRFConsumerBaseV2Plus {
         emit RaffleEntered(msg.sender);
     }
 
+    function checkUpkeep(bytes calldata /* checkData */ )
+        external
+        view
+        returns (bool upkeepNeeded, bytes memory /* performData */) { 
+
+        }
+
     function pickWinner() external {
         // check to see if enough time has passed
 
