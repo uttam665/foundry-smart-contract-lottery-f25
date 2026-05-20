@@ -41,6 +41,9 @@ contract Raffle is VRFConsumerBaseV2Plus {
     error Raffle_SendMoreToEnterRaffle();
     error Raffle__TransferFailed();
     error Raffle__RaffleNotOpen();
+    error Raffle__UpkeepNeeded(uint256 balance, uint256 playerCount, uint256 raffleState);
+
+
 
     // Type declarations
     enum RaffleState {
@@ -110,7 +113,7 @@ contract Raffle is VRFConsumerBaseV2Plus {
         bool hasPlayers = s_players.length > 0;
 
         upkeepNeeded = timeHasPassed && isOpen && hasBalance && hasPlayers;
-        return (upkeepNeeded, hex(""));
+        return (upkeepNeeded, (""));
 
         }
 
@@ -118,9 +121,9 @@ contract Raffle is VRFConsumerBaseV2Plus {
         // check to see if enough time has passed
 
         // 1000 - 2000 = 1000
-        (bool upkeepNeeded, ) = this.checkUpkeep(hex(""));
+        (bool upkeepNeeded, ) = this.checkUpkeep((""));
         if (!upkeepNeeded) {
-            revert("Upkeep not needed");
+            revert Raffle__UpkeepNeeded(address(this).balance, s_players.length, uint256(s_raffleState));
         }
 
         s_raffleState = RaffleState.CALCULATING;
